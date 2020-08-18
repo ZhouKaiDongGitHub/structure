@@ -1,105 +1,161 @@
 package cn.kzhou.structure.tree;
 
-public class BinaryTree {
+public class BinaryTree<E extends Comparable> {
 
-    private Node root;
+    private Node<E> root;
 
-    //添加
-    public void addNode(Node node){
-        if(node.getStudentNumber() == null){
-            System.out.println("StudentNumber cannot be null");
-            return;
-        }
-        //树为空
+    //insert
+    public void insert(E element){
         if(root == null){
-            root = node;
-            return;
+           root = new Node<>(element);
+           return;
         }
-        Node currentNode ;
-        Node nextNode  = root;
-        Boolean isLeft = true;
-        do{
-            currentNode = nextNode;
-            if(node.getStudentNumber()<nextNode.getStudentNumber()){
-                nextNode = currentNode.left;
-                isLeft = true;
-            }else if(node.getStudentNumber()> nextNode.getStudentNumber()){
-                nextNode = currentNode.rigth;
-                isLeft = false;
-            }
-        }while (nextNode != null);
-
-        if(isLeft){
-            currentNode.left = node;
-        }else {
-            currentNode.rigth = node;
-        }
-    }
-
-    public Node deleteNode(Node node){
-        //删除节点有三种情况
-        //1.删除的节点没有子节点
-
-        //2.删除的节点只有一个子节点
-        //3.删除的节点有两个子节点
-    }
-
-    public boolean modifyNode(Node node){
-        Node temp;
-        if((temp=findNode(node))!=null){
-            temp.setName(node.getName());
-            temp.setAge(node.getAge());
-            return true;
-        }
-        return false;
-    }
-
-    public Node findNode(Node node){
-        Node temp = root;
-        while (temp!=null && node.getStudentNumber() != temp.getStudentNumber()){
-            if(node.getStudentNumber()< temp.getStudentNumber()){
-                temp = temp.left;
+        Node<E> temp = root;
+        while (true){
+            if(element.compareTo(temp.getElement())<0){
+                if(temp.leftChild == null){
+                    temp.leftChild = new Node(element);
+                    return;
+                }
+                temp = temp.leftChild;
             }else {
-                temp = temp.rigth;
+                if(temp.rightChild == null){
+                    temp.rightChild = new Node(element);
+                    return;
+                }
+                temp = temp.rightChild;
             }
         }
-        if(temp == null){
-            System.out.println("未找到需要的值！");
+    }
+
+    public Node delete(E element){
+        //删除节点有三种情况
+        if(root == null){
             return null;
+        }
+        Node<E> temp = root;
+        Node<E> tempFather = null;
+        boolean isLeft = true;
+        while (element.compareTo(temp.getElement())!= 0){
+            tempFather = temp;
+            if(element.compareTo(temp.getElement())<0){
+                temp = temp.rightChild;
+                isLeft = false;
+            }else if(element.compareTo(temp.getElement())<0){
+                temp = temp.leftChild;
+                isLeft = true;
+            }
+            if(temp == null){
+                return null;
+            }
+        }
+        //1.删除的节点没有子节点
+        if(temp.leftChild == null && temp.rightChild ==null){
+            if(temp == root){
+                root = null;
+            }else if(isLeft){
+                tempFather.leftChild = null;
+            }else {
+                tempFather.rightChild = null;
+            }
+            //2.删除的节点只有一个子节点
+        }else if(temp.leftChild == null){
+            if(temp == root){
+                root = temp.rightChild;
+            }else if(isLeft){
+                tempFather.leftChild = temp.rightChild;
+            }else{
+                tempFather.rightChild = temp.rightChild;
+            }
+        }else if(temp.rightChild == null){
+            if(temp == root){
+                root = temp.leftChild;
+            }else if(isLeft){
+                tempFather.leftChild = temp.leftChild;
+            }else{
+                tempFather.rightChild = temp.leftChild;
+            }
+        }else {
+            //3.删除的节点有两个子节点
+
+        }
+    }
+
+
+    public Node findNode(E element){
+        Node temp = root;
+        if(root == null){
+            return null;
+        }
+        while (element.compareTo(temp.getElement())!=0){
+            if(element.compareTo(temp.getElement())<0){
+                temp = temp.leftChild;
+            }else {
+                temp = temp.rightChild;
+            }
+            if(temp == null){
+                return null;
+            }
         }
         return temp;
     }
 
-    public void traverseTreeLeft(){
-        //左序遍历
-        if(root == null){
-            System.out.println("The tree is null");
-            return;
+    public static final int PREORDER = 1;
+    public static final int INORDER = 2;
+    public static final int POSTORDER = 3;
+
+    public void traverse(int type){
+        switch (type){
+            case 1:
+                System.out.println("先序遍历： \t");
+                preorder(root);
+                break;
+            case 2:
+                System.out.println("中序遍历： \t");
+                inorder(root);
+                break;
+            case 3:
+                System.out.println("后序遍历： \t");
+                postorder(root);
+                break;
         }
-        traverseTree(root);
     }
 
-    public void traverseTree(Node node){
-        if(node.left != null){
-            traverseTree(node.left);
+    private void inorder(Node<E> node){
+        if(node != null){
+            inorder(node.leftChild);
+            System.out.println(node.toString());
+            inorder(node.rightChild);
         }
-        System.out.println(node);
-        if(node.rigth != null){
-            traverseTree(node.rigth);
+    }
+
+    private void postorder(Node<E> node){
+        if(node != null){
+            System.out.println(node.toString());
+            preorder(node.leftChild);
+            preorder(node.rightChild);
+        }
+    }
+    private void preorder(Node<E> node){
+        if(node != null){
+            preorder(node.leftChild);
+            preorder(node.rightChild);
+            System.out.println(node.toString());
         }
     }
 
     public static void main(String[] args) {
-        BinaryTree binaryTree = new BinaryTree();
-        binaryTree.addNode(new Node(null,"zhangsan",25));
-        binaryTree.addNode(new Node(1,"zhangsan",25));
-        binaryTree.addNode(new Node(5,"lisi",55));
-        binaryTree.addNode(new Node(10,"wangwu",26));
-        binaryTree.addNode(new Node(2,"zhaoliu",18));
-        binaryTree.addNode(new Node(3,"liuqi",60));
-        binaryTree.addNode(new Node(7,"zhuba",11));
-        binaryTree.traverseTreeLeft();
+        BinaryTree<Integer> binaryTree = new BinaryTree<>();
+        binaryTree.insert(3);
+        binaryTree.insert(1);
+        binaryTree.insert(4);
+        binaryTree.insert(10);
+        binaryTree.insert(9);
+        binaryTree.insert(20);
 
+        Node<Integer> node = binaryTree.findNode(10);
+        System.out.println(node.toString());
 
+        binaryTree.traverse(2);
     }
 }

@@ -1,50 +1,29 @@
 package cn.kzhou.structure.tree;
 
-public class Node {
-    private Integer studentNumber;
-    private String name;
-    private Integer age;
-    public Node left;
-    public Node rigth;
+public class Node<E extends Comparable> {
+    private E element;
+    public Node leftChild;
+    public Node rightChild;
 
-    public Node(){ }
-
-    public Node(Integer studentNumber,String name,Integer age){
-        this.studentNumber = studentNumber;
-        this.name = name;
-        this.age = age;
+    public Node() {
     }
 
-    public Integer getStudentNumber() {
-        return studentNumber;
+    public Node(E element) {
+        this.element = element;
     }
 
-    public void setStudentNumber(Integer studentNumber) {
-        this.studentNumber = studentNumber;
+    public E getElement() {
+        return element;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setElement(E element) {
+        this.element = element;
     }
 
     @Override
     public String toString() {
         return "Node{" +
-                "studentNumber=" + studentNumber +
-                ", name='" + name + '\'' +
-                ", age=" + age +
+                "element=" + element +
                 '}';
     }
 }
