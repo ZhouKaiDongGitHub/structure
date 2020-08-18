@@ -1,5 +1,7 @@
 package cn.kzhou.structure.tree;
 
+import java.util.Map;
+
 public class BinaryTree<E extends Comparable> {
 
     private Node<E> root;
@@ -77,8 +79,36 @@ public class BinaryTree<E extends Comparable> {
             }
         }else {
             //3.删除的节点有两个子节点
+            //找出后继节点
+            Node<E> success = temp.rightChild;
+            Node<E> successFather = null;
+            while (success.leftChild != null){
+                successFather = success;
+                success = success.leftChild;
+            }
+            if(successFather == null){//后继节点就是要删除节点的右孩子
+                success.leftChild = temp.leftChild;
+                if(temp ==root){
+                    root = success;
+                }else  if(isLeft){
+                    tempFather.leftChild = success;
 
+                }else {
+                    tempFather.rightChild = success;
+                }
+            }else {//后继节点是要删除节点的左下角节点
+                successFather.leftChild = success.rightChild;
+                success.leftChild = temp.leftChild;
+                if(temp == root){
+                    root = success;
+                }else if(isLeft){
+                    tempFather.leftChild = success;
+                }else {
+                    tempFather.rightChild = success;
+                }
+            }
         }
+        return temp;
     }
 
 
@@ -142,6 +172,25 @@ public class BinaryTree<E extends Comparable> {
             preorder(node.rightChild);
             System.out.println(node.toString());
         }
+    }
+
+    public int getTreeDepth(){
+        if(root == null){
+            return 0;
+        }
+        return getDepth(root,1);
+    }
+
+    private int getDepth(Node<E> node,int depth){
+        int leftDepth = depth;
+        int rightDepth = depth;
+        if(node.leftChild!=null){
+            leftDepth = getDepth(node.leftChild,leftDepth +1);
+        }
+        if(node.rightChild!=null){
+            rightDepth = getDepth(node.rightChild,rightDepth+1);
+        }
+        return Math.max(leftDepth,rightDepth);
     }
 
     public static void main(String[] args) {
