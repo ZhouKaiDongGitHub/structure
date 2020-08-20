@@ -1,12 +1,17 @@
 package cn.kzhou.structure.tree;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class BinaryTree<E extends Comparable> {
 
     private Node<E> root;
 
-    //insert
+    BinaryTree(){
+        root = null;
+    }
+
     public void insert(E element){
         if(root == null){
            root = new Node<>(element);
@@ -111,6 +116,35 @@ public class BinaryTree<E extends Comparable> {
         return temp;
     }
 
+    public Node<E> getMax(){
+        if(root == null){
+            return null;
+        }else {
+            Node<E> temp = root;
+            while (true){
+                if(temp.rightChild == null){
+                    return temp;
+                }else {
+                    temp = temp.rightChild;
+                }
+            }
+        }
+    }
+
+    public Node<E> getMin(){
+        if(root == null){
+            return null;
+        }else {
+            Node<E> temp = root;
+            while (true){
+                if(temp.leftChild==null){
+                    return temp;
+                }else {
+                    temp = temp.leftChild;
+                }
+            }
+        }
+    }
 
     public Node findNode(E element){
         Node temp = root;
@@ -128,6 +162,65 @@ public class BinaryTree<E extends Comparable> {
             }
         }
         return temp;
+    }
+
+    //以树的形式打印出该树
+    public void displayTree(){
+        int depth = getTreeDepth();
+        ArrayList<Node> currentLayerNodes = new ArrayList<Node>();
+        currentLayerNodes.add(root);  //存储该层所有节点
+        int layerIndex = 1;
+        while(layerIndex <= depth){
+            int NodeBlankNum = (int)Math.pow(2, depth-layerIndex)-1;  //在节点之前和之后应该打印几个空位
+            for(int i = 0;i<currentLayerNodes.size();i++){
+                Node node = currentLayerNodes.get(i);
+                printBlank(NodeBlankNum);   //打印节点之前的空位
+
+                if(node == null){
+                    System.out.print("*\t");  //如果该节点为null，用空位代替
+                }else{
+                    System.out.print("*  "+node.getElement()+"\t");  //打印该节点
+                }
+
+                printBlank(NodeBlankNum);  //打印节点之后的空位
+                System.out.print("*\t");   //补齐空位
+            }
+            System.out.println();
+            layerIndex++;
+            currentLayerNodes = getAllNodeOfThisLayer(currentLayerNodes);  //获取下一层所有的节点
+        }
+    }
+
+    //获取指定节点集合的所有子节点
+    private ArrayList getAllNodeOfThisLayer(List parentNodes){
+        ArrayList list = new ArrayList<Node>();
+        Node parentNode;
+        for(int i=0;i<parentNodes.size();i++){
+            parentNode = (Node)parentNodes.get(i);
+            if(parentNode != null){
+                if(parentNode.leftChild != null){  //如果上层的父节点存在左子节点，加入集合
+                    list.add(parentNode.leftChild);
+                }else{
+                    list.add(null);  //如果上层的父节点不存在左子节点，用null代替，一样加入集合
+                }
+                if(parentNode.rightChild != null){
+                    list.add(parentNode.rightChild);
+                }else{
+                    list.add(null);
+                }
+            }else{  //如果上层父节点不存在，用两个null占位，代表左右子节点
+                list.add(null);
+                list.add(null);
+            }
+        }
+        return list;
+    }
+
+    //打印指定位数的*
+    private void printBlank(int number){
+        for (int i=0;i<number;i++){
+            System.out.print("*\t");
+        }
     }
 
     public static final int PREORDER = 1;
@@ -193,6 +286,17 @@ public class BinaryTree<E extends Comparable> {
         return Math.max(leftDepth,rightDepth);
     }
 
+    //判断是否为叶子节点
+    public boolean isLeaf(Node node){
+        return (node.leftChild != null || node.rightChild != null);
+    }
+
+    //获取根节点
+    public Node getRoot(){
+        return root;
+    }
+
+
     public static void main(String[] args) {
         BinaryTree<Integer> binaryTree = new BinaryTree<>();
         binaryTree.insert(3);
@@ -200,11 +304,16 @@ public class BinaryTree<E extends Comparable> {
         binaryTree.insert(4);
         binaryTree.insert(10);
         binaryTree.insert(9);
+        binaryTree.insert(2);
+        binaryTree.insert(8);
+        binaryTree.insert(12);
         binaryTree.insert(20);
-
-        Node<Integer> node = binaryTree.findNode(10);
-        System.out.println(node.toString());
-
+        binaryTree.insert(18);
+        binaryTree.displayTree();
         binaryTree.traverse(2);
+        binaryTree.delete(3);
+        binaryTree.displayTree();
+        binaryTree.traverse(2);
+
     }
 }
