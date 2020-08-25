@@ -9,19 +9,49 @@ public class QuickSort {
     }
 
     public void sort(){
-        int index = 0;
-        for (int i=arr.length-1;i>0;i++){
-            if(arr[i]<arr[0]){
-                int temp = arr[0];
-                arr[0] = arr[i];
-                arr[i] = temp;
-                index = i;
-            }
-            if(arr[i]>arr[0])
+        long start = System.currentTimeMillis();
+
+        recursiveSort(0,arr.length-1);
+
+        long spend = System.currentTimeMillis() - start;
+        System.out.println("快速排序花费毫秒数： " + spend);
+    }
+
+    private void recursiveSort(int left,int right){
+        if(left>=right){
+            return;
+        }else {
+            int base = arr[left];
+            int index = partition(left,right,base);
+            recursiveSort(left,index-1);
+            recursiveSort(index+1,right);
         }
     }
 
-    private void reverseSort(int left,int right){
+    private int partition(int left,int right,int base){
+        while (left<right){
+            while (left<right && arr[right]>=base){
+                right--;
+            }
+            swap(left,right);
+            while (left<right && arr[left]<=base){
+                left++;
+            }
+            swap(left,right);
+        }
+        return left;
+    }
 
+    private void swap(int low,int high){
+        int temp = arr[high];
+        arr[high] = arr[low];
+        arr[low] = temp;
+    }
+
+    public int getIndex(int index){
+        if(arr.length>=index){
+            return arr[index];
+        }
+        return -1;
     }
 }
