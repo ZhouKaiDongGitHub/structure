@@ -15,16 +15,21 @@ public class Tests {
         int[] testArray1 = testArray.clone();
         int[] testArray2 = testArray.clone();
         int[] testArray3 = testArray.clone();
+        int[] testArray4 = testArray.clone();
 
         MergeSort mergeSort = new MergeSort(testArray1);
         mergeSort.sort();
         System.out.println(mergeSort.getIndex(9999));
 
-        QuickSort quickSort = new QuickSort(testArray2);
+        ShellSort shellSort = new ShellSort(testArray2);
+        shellSort.sort();
+        System.out.println(shellSort.getIndex(9999));
+
+        QuickSort quickSort = new QuickSort(testArray3);
         quickSort.sort();
         System.out.println(quickSort.getIndex(9999));
 
-        HeapSort heapSort = new HeapSort(testArray3);
+        HeapSort heapSort = new HeapSort(testArray4);
         heapSort.sort();
         System.out.println(heapSort.getIndex(9999));
     }
